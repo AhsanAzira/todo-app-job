@@ -9,10 +9,8 @@
 </head>
 <body>
 
-  <!-- SPACE CANVAS BACKGROUND -->
   <canvas id="space-canvas"></canvas>
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="brand">Tugas<span>.</span></div>
     <div class="tab-group">
@@ -25,15 +23,12 @@
     </div>
   </div>
 
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- PAGE: AKTIF -->
     <div class="page active" id="page-active">
       <div id="list-active"></div>
     </div>
 
-    <!-- PAGE: SELESAI -->
     <div class="page" id="page-done">
       <div id="stats-bar-wrap"></div>
       <div id="list-done"></div>
@@ -41,14 +36,12 @@
 
   </div>
 
-  <!-- FAB BUTTON -->
   <button class="fab" id="fab" title="Tambah tugas">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
     </svg>
   </button>
 
-  <!-- OVERLAY + MODAL -->
   <div class="overlay" id="overlay">
     <div class="modal" id="modal">
       <div class="modal-handle"></div>
@@ -63,18 +56,12 @@
       </div>
 
       <div class="form-field">
-        <label class="form-label" for="inp-course">Mata Kuliah / Kategori</label>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label class="form-label" for="inp-course" style="margin-bottom: 0;">Mata Kuliah / Kategori</label>
+          <button onclick="openCourseModal()" type="button" style="background: none; border: none; color: var(--accent); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; text-transform: uppercase; transition: 0.2s;">Kelola</button>
+        </div>
         <select class="form-select" id="inp-course">
-          <option value="" disabled selected>Pilih mata kuliah...</option>
-          <option>Digital Transformation</option>
-          <option>Enterprise Architecture</option>
-          <option>Internet of Things</option>
-          <option>Manajemen Proyek</option>
-          <option>Metode Penelitian</option>
-          <option>Software Quality Assurance</option>
-          <option>Software Startup Business</option>
-          <option>Lainnya</option>
-        </select>
+          </select>
       </div>
 
       <div class="form-row">
@@ -98,6 +85,25 @@
       </div>
 
       <button class="btn-submit" onclick="addTask()">Simpan Tugas</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay-course">
+    <div class="modal" id="modal-course">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <span class="modal-title">Mata Kuliah</span>
+        <button class="modal-close" onclick="closeCourseModal()">&#x2715;</button>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+        <input class="form-input" type="text" id="inp-new-course" placeholder="Misal: Aljabar Abstrak, Metode Numerik...">
+        <button class="btn-submit" style="width: auto; margin-top: 0; padding: 11px 20px;" onclick="addCourse()">Tambah</button>
+      </div>
+
+      <div class="section-label" style="margin-top: 0;">Daftar Mata Kuliah Tersimpan</div>
+      <div id="course-list-container" style="max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 10px;">
+        </div>
     </div>
   </div>
 

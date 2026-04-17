@@ -1,8 +1,28 @@
-// ===================== DATA =====================
+// ===================== DATA LOKAL (TUGAS & MATA KULIAH) =====================
 let tasks = JSON.parse(localStorage.getItem('tugas-kuliah-app') || '[]');
 
-function save() {
+// Inisialisasi daftar mata kuliah
+const defaultCourses = [
+  "Digital Transformation",
+  "Enterprise Architecture",
+  "Internet of Things",
+  "Manajemen Proyek",
+  "Metode Penelitian",
+  "Software Quality Assurance",
+  "Software Startup Business"
+];
+let courses = JSON.parse(localStorage.getItem('mata-kuliah-app'));
+if (!courses) {
+  courses = defaultCourses;
+  localStorage.setItem('mata-kuliah-app', JSON.stringify(courses));
+}
+
+function saveTasks() {
   localStorage.setItem('tugas-kuliah-app', JSON.stringify(tasks));
+}
+
+function saveCourses() {
+  localStorage.setItem('mata-kuliah-app', JSON.stringify(courses));
 }
 
 // ===================== UTILS =====================
@@ -32,7 +52,49 @@ const PRIORITY_COLORS = {
   rendah: { bg: 'rgba(16, 185, 129, 0.2)', text: '#6ee7b7', dot: '#10b981' }
 };
 
-// ===================== RENDER =====================
+// ===================== RENDER MATA KULIAH =====================
+function renderCourses() {
+  const selectEl = document.getElementById('inp-course');
+  const listContainer = document.getElementById('course-list-container');
+  const currentVal = selectEl.value;
+
+  // Render untuk Pilihan Dropdown
+  selectEl.innerHTML = '<option value="" disabled selected>Pilih mata kuliah...</option>';
+  
+  // Render untuk List di dalam Modal Edit
+  listContainer.innerHTML = '';
+
+  // Sortir mata kuliah sesuai abjad
+  const sortedCourses = [...courses].sort();
+
+  sortedCourses.forEach(courseName => {
+    // Masukkan ke Dropdown
+    const opt = document.createElement('option');
+    opt.value = courseName;
+    opt.textContent = courseName;
+    selectEl.appendChild(opt);
+
+    // Masukkan ke List Modal Edit (Dengan styling bawaan card tugas)
+    listContainer.innerHTML += `
+      <div class="task-card" style="padding:10px 16px; margin-bottom:6px; align-items:center;">
+        <div class="task-body">
+          <div class="task-title" style="font-size:14px; font-weight:600;">${esc(courseName)}</div>
+        </div>
+        <button class="task-del" style="opacity:1;" onclick="deleteCourse('${esc(courseName)}')" title="Hapus">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>`;
+  });
+  
+  // Kembalikan pilihan jika ada dan belum terhapus
+  if (currentVal && courses.includes(currentVal)) {
+    selectEl.value = currentVal;
+  } else {
+    selectEl.value = "";
+  }
+}
+
+// ===================== RENDER TUGAS =====================
 function renderAll() {
   const active = tasks.filter(t => !t.done);
   const done = tasks.filter(t => t.done);
@@ -129,16 +191,46 @@ function renderList(containerId, list, type) {
   el.innerHTML = html;
 }
 
-// ===================== ACTIONS =====================
+// ===================== ACTIONS MATA KULIAH =====================
+function addCourse() {
+  const input = document.getElementById('inp-new-course');
+  const rawValue = input.value;
+  
+  if(!rawValue.trim()) return;
+
+  // Memecah teks berdasarkan koma jika ingin menambah banyak sekaligus
+  const courseNames = rawValue.split(',').map(name => name.trim()).filter(name => name !== '');
+
+  courseNames.forEach(name => {
+    // Hindari duplikasi
+    if (!courses.includes(name)) {
+      courses.push(name);
+    }
+  });
+
+  saveCourses();
+  renderCourses();
+  input.value = '';
+}
+
+function deleteCourse(courseName) {
+  if(confirm(`Hapus mata kuliah "${courseName}" dari daftar pilihan? (Tugas yang sudah memakai mata kuliah ini tidak akan hilang)`)) {
+      courses = courses.filter(c => c !== courseName);
+      saveCourses();
+      renderCourses();
+  }
+}
+
+// ===================== ACTIONS TUGAS =====================
 function toggleTask(id) {
   const t = tasks.find(x => x.id === id);
-  if (t) { t.done = !t.done; save(); renderAll(); }
+  if (t) { t.done = !t.done; saveTasks(); renderAll(); }
 }
 
 function deleteTask(id) {
   if (!confirm('Hapus tugas ini?')) return;
   tasks = tasks.filter(x => x.id !== id);
-  save(); renderAll();
+  saveTasks(); renderAll();
 }
 
 function addTask() {
@@ -152,7 +244,7 @@ function addTask() {
   if (!course) { alert('Pilih mata kuliah terlebih dahulu.'); return; }
 
   tasks.unshift({ id: Date.now(), text, course, date, notes, priority, done: false });
-  save(); renderAll(); closeModal();
+  saveTasks(); renderAll(); closeModal();
 
   document.getElementById('inp-task').value = '';
   document.getElementById('inp-course').value = '';
@@ -182,10 +274,22 @@ function closeModal() {
   document.getElementById('fab').classList.remove('open');
 }
 
+function openCourseModal() {
+  document.getElementById('overlay-course').classList.add('open');
+}
+
+function closeCourseModal() {
+  document.getElementById('overlay-course').classList.remove('open');
+}
+
 document.getElementById('fab').addEventListener('click', openModal);
 
 document.getElementById('overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
+});
+
+document.getElementById('overlay-course').addEventListener('click', function(e) {
+  if (e.target === this) closeCourseModal();
 });
 
 document.getElementById('inp-task').addEventListener('keydown', function(e) {
@@ -193,11 +297,15 @@ document.getElementById('inp-task').addEventListener('keydown', function(e) {
 });
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') {
+    closeModal();
+    closeCourseModal();
+  }
 });
 
 // ===================== INIT =====================
-renderAll();
+renderCourses(); // Render daftar mata kuliah di dropdown
+renderAll();     // Render tugas
 
 // ===================== SPACE ANIMATION =====================
 const canvas = document.getElementById('space-canvas');
