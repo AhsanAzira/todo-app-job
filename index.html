@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Tugas Kuliah</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- SPACE CANVAS BACKGROUND -->
+  <canvas id="space-canvas"></canvas>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">Tugas<span>.</span></div>
+    <div class="tab-group">
+      <button class="tab-btn active" id="tab-active" onclick="switchTab('active')">
+        Aktif <span class="tab-badge" id="badge-active">0</span>
+      </button>
+      <button class="tab-btn" id="tab-done" onclick="switchTab('done')">
+        Selesai <span class="tab-badge" id="badge-done">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- PAGE: AKTIF -->
+    <div class="page active" id="page-active">
+      <div id="list-active"></div>
+    </div>
+
+    <!-- PAGE: SELESAI -->
+    <div class="page" id="page-done">
+      <div id="stats-bar-wrap"></div>
+      <div id="list-done"></div>
+    </div>
+
+  </div>
+
+  <!-- FAB BUTTON -->
+  <button class="fab" id="fab" title="Tambah tugas">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </button>
+
+  <!-- OVERLAY + MODAL -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <span class="modal-title">Tambah Tugas</span>
+        <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="inp-task">Nama Tugas</label>
+        <input class="form-input" type="text" id="inp-task" placeholder="Contoh: Buat laporan UTS...">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="inp-course">Mata Kuliah / Kategori</label>
+        <select class="form-select" id="inp-course">
+          <option value="" disabled selected>Pilih mata kuliah...</option>
+          <option>Digital Transformation</option>
+          <option>Enterprise Architecture</option>
+          <option>Internet of Things</option>
+          <option>Manajemen Proyek</option>
+          <option>Metode Penelitian</option>
+          <option>Software Quality Assurance</option>
+          <option>Software Startup Business</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label" for="inp-date">Tenggat Waktu & Jam</label>
+          <input class="form-input" type="datetime-local" id="inp-date">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="inp-priority">Prioritas</label>
+          <select class="form-select" id="inp-priority">
+            <option value="normal" selected>Normal</option>
+            <option value="tinggi">Tinggi</option>
+            <option value="rendah">Rendah</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="inp-notes">Catatan (Opsional)</label>
+        <textarea class="form-textarea" id="inp-notes" placeholder="Detail tambahan, referensi, atau instruksi..."></textarea>
+      </div>
+
+      <button class="btn-submit" onclick="addTask()">Simpan Tugas</button>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
